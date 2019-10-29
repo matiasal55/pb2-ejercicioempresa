@@ -48,7 +48,7 @@ public class Empresa {
 			if (lista.getVendedor().getNombre().equals(nombreVendedor)
 					&& lista.getVendedor().getApellido().equals(apellidoVendedor)
 					&& lista.getDetalles() instanceof Producto) {
-				Double precioProducto = ((Producto) lista.getDetalles()).getPrecio();
+				Double precioProducto = ((Producto) lista.getDetalles()).getPrecio()*lista.getCantidad();
 				comisionTotal += (precioProducto * lista.getVendedor().getPorcentajeComision()) / 100;
 			}
 		}
