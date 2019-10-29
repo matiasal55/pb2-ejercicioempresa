@@ -22,11 +22,12 @@ public class Empresa {
 	}
 
 	public Boolean agregarVendedor(String nombre, String apellido, Double porcentajeComision) {
-		Vendedor nuevo = new Vendedor(nombre, apellido, porcentajeComision);
+
 		for (Vendedor lista : this.listaDeVendedores) {
-			if (lista.equals(nuevo))
+			if (lista.getNombre().equals(nombre) && lista.getApellido().equals(apellido))
 				return false;
 		}
+		Vendedor nuevo = new Vendedor(nombre, apellido, porcentajeComision);
 		this.listaDeVendedores.add(nuevo);
 		return true;
 	}
@@ -45,9 +46,10 @@ public class Empresa {
 		Double comisionTotal = 0.0;
 		for (Venta lista : this.listaDeVentas) {
 			if (lista.getVendedor().getNombre().equals(nombreVendedor)
-					&& lista.getVendedor().getApellido().equals(apellidoVendedor)) {
+					&& lista.getVendedor().getApellido().equals(apellidoVendedor)
+					&& lista.getDetalles() instanceof Producto) {
 				Double precioProducto = ((Producto) lista.getDetalles()).getPrecio();
-				comisionTotal += precioProducto * lista.getVendedor().getPorcentajeComision();
+				comisionTotal += (precioProducto * lista.getVendedor().getPorcentajeComision()) / 100;
 			}
 		}
 		return comisionTotal;
@@ -55,22 +57,19 @@ public class Empresa {
 
 	public ArrayList<Servicio> obtenerListaServicios(Date fecha, Vendedor vendedor) {
 		ArrayList<Servicio> listaDeServicios = new ArrayList<>();
+		for (Venta lista : this.listaDeVentas) {
+			if (lista.getFecha().equals(fecha) && lista.getVendedor().equals(vendedor)
+					&& lista.getDetalles() instanceof Servicio)
+				listaDeServicios.add((Servicio) lista.getDetalles());
+		}
 		return listaDeServicios;
 	}
 
-	public Boolean buscarVendedor(String nombre, String apellido) {
-		for (Vendedor lista : this.listaDeVendedores) {
-			if (lista.getNombre().equals(nombre) && lista.getApellido().equals(apellido))
-				return true;
-		}
-		return false;
-	}
-
 	public Boolean eliminarVenta(Long id) {
-		Iterator<Venta> it=this.listaDeVentas.iterator();
-		while(it.hasNext()) {
-			Venta aux=it.next();
-			if(aux.getIdVenta().equals(id)) {
+		Iterator<Venta> it = this.listaDeVentas.iterator();
+		while (it.hasNext()) {
+			Venta aux = it.next();
+			if (aux.getIdVenta().equals(id)) {
 				it.remove();
 				return true;
 			}
